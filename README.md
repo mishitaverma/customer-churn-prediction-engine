@@ -1,4 +1,6 @@
-# Customer Churn Intelligence & Prediction Engine
+# StayMetric — Customer Churn Intelligence & Prediction Engine
+**[Live Dashboard](https://staymetric.streamlit.app/)**
+
 ![Dashboard Preview](dashboard.png)
 
 An end-to-end data analytics and machine learning pipeline that generates synthetic SaaS customer behavioral data, stores it in a relational MySQL database, trains a Random Forest classifier, and serves live churn risk predictions through an interactive Streamlit dashboard.

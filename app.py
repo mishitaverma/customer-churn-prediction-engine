@@ -36,7 +36,7 @@ def load_data():
 df = load_data()
 
 # --- Header & KPI Row ---
-st.title("Customer Churn Intelligence Dashboard")
+st.title("StayMetric — Customer Churn Intelligence")
 st.caption("Live analytics backed by MySQL + Random Forest predictive scoring")
 
 total_customers = len(df)
