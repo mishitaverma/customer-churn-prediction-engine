@@ -2,6 +2,8 @@ streamlit
 pandas
 plotly
 scikit-learn
+imbalanced-learn
+shap
 joblib
 mysql-connector-python
 python-dotenv
