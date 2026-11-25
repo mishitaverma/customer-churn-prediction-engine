@@ -125,7 +125,7 @@ Core segmentation metrics live directly inside MySQL views built with **`WITH` C
 
 1. **Clone & install dependencies:**
    ```bash
-   git clone [https://github.com/mishitaverma/customer-churn-prediction-engine.git](https://github.com/mishitaverma/customer-churn-prediction-engine.git)
+   git clone https://github.com/mishitaverma/customer-churn-prediction-engine.git
    cd customer-churn-prediction-engine
    python3 -m venv venv
    source venv/bin/activate
