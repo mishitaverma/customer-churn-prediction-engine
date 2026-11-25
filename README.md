@@ -3,7 +3,7 @@
 
 **[Live Dashboard](https://staymetric.streamlit.app/)** | **[Data Attribution (`DATA_SOURCE.md`)](DATA_SOURCE.md)**
 
-![Dashboard Preview](dashboard.png)
+![Dashboard Preview](dashboard2.png)
 
 ## Problem Statement
 Subscription businesses lose compounding recurring revenue when high-value accounts cancel silently. **StayMetric** is an end-to-end SQL, Machine Learning, and Business Intelligence platform that identifies at-risk subscribers before cancellation, quantifies **Expected Revenue at Risk** (`predicted churn probability × monthly charges`), explains individual churn drivers via **SHAP**, and estimates the ROI of targeted retention interventions.
