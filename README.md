@@ -5,7 +5,7 @@
 [![MySQL](https://img.shields.io/badge/MySQL-CTEs%20%26%20Window%20Views-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](sql/analytics_views.sql)
 [![License](https://img.shields.io/badge/Data-IBM%20Telco%20(CC%20BY%204.0)-2EA44F?style=for-the-badge)](DATA_SOURCE.md)
 
-![StayMetric Dashboard Preview](dashboard2.png)
+![StayMetric Dashboard Preview](dashboard1.png)
 
 ## Problem Statement
 Subscription businesses lose compounding recurring revenue when high-value accounts cancel silently. **StayMetric** is an end-to-end SQL, Machine Learning, and Business Intelligence platform that identifies at-risk subscribers before cancellation, quantifies **Expected Revenue at Risk** (`predicted churn probability × monthly charges`), explains churn drivers via **SHAP**, and estimates the financial ROI of targeted retention campaigns.
@@ -56,6 +56,8 @@ All preprocessing (`StandardScaler`, `OneHotEncoder`) and resampling (`SMOTE`) a
 | Random Forest + SMOTE | 0.642 ± 0.048 | 0.839 ± 0.017 | 0.627 ± 0.026 | 0.678 ± 0.028 | 0.584 ± 0.026 |
 | Majority-Class Baseline | 0.265 ± 0.000 | 0.500 ± 0.000 | 0.000 ± 0.000 | 0.000 ± 0.000 | 0.000 ± 0.000 |
 
+**Model Selection Note:** The top models are statistically comparable across folds—their PR-AUC scores (`0.654`, `0.653`, `0.652`, `0.651`, each `± ~0.043`) fall well within one standard deviation of each other, and Logistic Regression achieves nearly identical ROC-AUC (`0.845` vs. `0.846`). Gradient Boosting was selected as the active pipeline for achieving the highest mean PR-AUC, while Logistic Regression remains a simpler, more directly interpretable alternative with negligible performance trade-off.
+
 ### Untouched Holdout Test Set (20% Split — 1,409 Accounts)
 * **ROC-AUC:** `0.848` | **PR-AUC:** `0.665`
 * **Default Threshold (`0.50`):** Recall `50.8%` | Precision `65.3%` | F1 `0.571` | Accuracy `79.8%`
@@ -74,11 +76,16 @@ At `0.50`, Gradient Boosting misses nearly half of real churners. Dropping the c
   2. `tenure` (`0.415`) — Risk concentrates heavily in the first 12 months before decaying steadily.
   3. `tech_support_No` (`0.231`) — Accounts lacking tech support experience sharply higher friction.
   4. `internet_service_Fiber optic` (`0.199`) & `monthly_charges` (`0.194`) — High-ARPU Fiber plans carry disproportionate revenue exposure.
-* **Portfolio Revenue Exposure:** Across the 7,043-account benchmark (**26.5%** churn), **2,893 accounts** cross the `0.25` risk threshold, representing **$138,149/month ($1.66M/year)** in expected revenue at risk.
+* **Portfolio Revenue Exposure:** Across the 7,043-account benchmark (**26.5%** churn), **2,893 accounts** cross the `0.25` risk threshold, representing **$138,149/month ($1.66M/year)** in expected revenue at risk. These portfolio-level figures are computed by scoring all 7,043 rows with the serialized Gradient Boosting model trained on the 80% training split (rather than out-of-fold predictions), so 80% of the underlying account scores are in-sample.
 * **Estimated Retention Impact:**
   * **Annual Contract Upgrade Offer:** Converting **10%** of Month-to-Month subscribers toward 1-Year retention rates saves **~$97,072/year**.
   * **Auto-Pay Migration Nudge:** Migrating **15%** of Electronic Check payers toward automatic payment baselines saves **~$95,126/year**.
 * **Experiment Design:** Includes an integrated 50/50 randomized A/B test specification (two-proportion z-test, α = 0.05, 80% power, 5pp MDE) inside Tab 1 of the dashboard.
+
+### Assumptions & Limitations
+* **Causal Assumption in Savings Estimates:** The projected savings (**~$97,072/year** for the contract upgrade offer and **~$95,126/year** for the auto-pay nudge) assume that converted customers will churn at the same rate as existing customers on those plans. Because observational differences may reflect self-selection rather than a causal effect, the A/B test designed in Tab 1 is required to validate actual lift.
+* **Illustrative Benchmark Data:** All metrics are derived from a public benchmark dataset representing a fictional telecom company, making the results illustrative rather than production-ready.
+* **Static Cross-Sectional Features:** The dataset is a single-point snapshot without longitudinal behavioral signals (such as usage drop-offs, billing disputes, or support ticket velocity), which would be needed for real-time production alerting.
 
 ---
 
@@ -95,6 +102,7 @@ Core segmentation metrics live directly inside MySQL views built with **`WITH` C
 ```text
 ├── app.py                     # 4-tab Streamlit & Plotly dashboard (root entry for Streamlit Cloud)
 ├── DATA_SOURCE.md             # Public IBM dataset attribution (CC BY 4.0) & synthetic boundary
+├── LICENSE                    # MIT License (code); IBM dataset remains under CC BY 4.0
 ├── .env.example               # Template for local MySQL credentials (.env is gitignored)
 ├── requirements.txt           # Pinned runtime dependencies
 ├── data/
@@ -142,3 +150,8 @@ Core segmentation metrics live directly inside MySQL views built with **`WITH` C
    ```bash
    streamlit run app.py
    ```
+
+---
+
+## License
+This project's code is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details. The IBM Telco Customer Churn dataset remains subject to its original **CC BY 4.0** license (see [DATA_SOURCE.md](DATA_SOURCE.md)).
